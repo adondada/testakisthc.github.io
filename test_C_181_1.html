@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Εξάσκηση C — 181 Ερωτήσεις</title>
+<style>
+:root{
+  --bg:#0e1218;--bg2:#161c25;--bg3:#1d2531;--bg4:#232c3a;
+  --line:#2b3543;--line2:#39465a;
+  --txt:#e9eef5;--muted:#94a3b6;--dim:#6f7d90;
+  --crim:#ff6b81;--crim-d:#e0566b;
+  --cyan:#5cc8ff;
+  --ok:#48d597;--okbg:rgba(72,213,151,.10);--okln:rgba(72,213,151,.45);
+  --bad:#ff6464;--badbg:rgba(255,100,100,.10);--badln:rgba(255,100,100,.45);
+  --warn:#f4b740;--warnbg:rgba(244,183,64,.10);--warnln:rgba(244,183,64,.5);
+  --kw:#c792ea;--str:#9ed684;--num:#f0925f;--com:#5f6f82;
+  --mono:"SF Mono","JetBrains Mono","Cascadia Code",ui-monospace,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1.6;font-size:16px;
+  background-image:radial-gradient(900px 500px at 80% -10%,rgba(92,200,255,.05),transparent),
+                   radial-gradient(700px 500px at -10% 0%,rgba(255,107,129,.05),transparent)}
+.wrap{max-width:860px;margin:0 auto;padding:0 18px 100px}
+header{position:sticky;top:0;z-index:40;background:rgba(14,18,24,.88);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.hdr{max-width:860px;margin:0 auto;padding:10px 18px 0}
+.tbar{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.dots{display:flex;gap:6px;margin-right:6px}
+.dots i{width:11px;height:11px;border-radius:50%}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.tbar .path{color:var(--dim)}
+.tcmd{font-family:var(--mono);font-size:13px;color:var(--muted);padding:6px 0 9px;white-space:nowrap;overflow-x:auto}
+.tcmd .pr{color:var(--ok)}.tcmd .fl{color:var(--cyan)}.tcmd .vl{color:var(--str)}
+.srow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:0 0 9px;
+  font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.srow b{color:var(--txt)}.srow .ok{color:var(--ok)}.srow .bad{color:var(--bad)}
+.pbar{height:4px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:10px}
+.pbar>div{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--crim));transition:width .35s}
+
+/* tabs */
+.tabs{display:flex;gap:0;overflow-x:auto;padding:12px 18px 0;max-width:860px;margin:0 auto}
+.tab{font-family:var(--mono);font-size:11.5px;padding:6px 12px;border:1px solid var(--line);
+  background:var(--bg3);color:var(--muted);cursor:pointer;transition:all .15s;border-radius:8px 8px 0 0;
+  margin-right:4px;white-space:nowrap}
+.tab:hover{background:var(--bg4);color:var(--txt)}
+.tab.active{background:var(--bg2);color:var(--txt);border-bottom-color:var(--bg2)}
+
+/* intro */
+.intro{margin:26px 0 10px}
+.intro h1{font-size:28px;line-height:1.2;margin:0 0 6px;letter-spacing:-.4px}
+.intro h1 span{color:var(--crim)}
+.intro .sub{color:var(--muted);font-size:15px;margin:0 0 14px}
+.legend{display:flex;gap:8px 16px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;
+  color:var(--muted);background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.ld{width:9px;height:9px;border-radius:3px}
+.note{margin-top:12px;font-size:13.5px;color:var(--dim);border-left:2px solid var(--line2);padding-left:12px}
+
+/* section head */
+.sh{font-family:var(--mono);font-size:13px;letter-spacing:1.5px;color:var(--muted);
+  text-transform:uppercase;margin:36px 0 14px;display:flex;align-items:center;gap:12px}
+.sh .n{color:var(--crim);font-weight:600}
+.sh::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* card */
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;
+  padding:18px 18px 16px;margin:0 0 14px;scroll-margin-top:160px;transition:border-color .2s}
+.card.done{border-color:var(--line2)}
+.qh{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.qn{font-family:var(--mono);font-size:12px;color:var(--dim);border:1px solid var(--line);
+  border-radius:7px;padding:2px 8px;flex:none}
+.badge{font-family:var(--mono);font-size:11px;letter-spacing:.4px;padding:3px 9px;
+  border-radius:99px;font-weight:600;text-transform:uppercase}
+.b-out{background:rgba(92,200,255,.12);color:var(--cyan);border:1px solid rgba(92,200,255,.3)}
+.b-mcq{background:rgba(199,146,234,.12);color:var(--kw);border:1px solid rgba(199,146,234,.3)}
+.b-multi{background:rgba(244,183,64,.12);color:var(--warn);border:1px solid rgba(244,183,64,.3)}
+.b-tf{background:rgba(72,213,151,.12);color:var(--ok);border:1px solid rgba(72,213,151,.3)}
+.b-yn{background:rgba(255,107,129,.12);color:var(--crim);border:1px solid rgba(255,107,129,.3)}
+.qt{font-size:16px;margin:2px 0 4px}
+.qt code{font-family:var(--mono);font-size:13.5px;background:rgba(255,255,255,.06);
+  padding:1px 5px;border-radius:5px;color:#d7e6f5}
+.qt strong{color:#fff;font-weight:650}
+.qhint{font-size:13px;color:var(--dim);margin:0 0 4px}
+
+/* code pane */
+.cpane{margin:12px 0 14px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0b0f15}
+.ctab{font-family:var(--mono);font-size:11.5px;color:var(--dim);padding:7px 12px;
+  border-bottom:1px solid var(--line);background:var(--bg3);display:flex;align-items:center;gap:7px}
+.cdot{width:8px;height:8px;border-radius:2px;background:var(--cyan);opacity:.7}
+pre{margin:0;padding:13px 14px;overflow-x:auto}
+pre code{font-family:var(--mono);font-size:13.5px;line-height:1.65;color:#cfe0f2;white-space:pre}
+.c-kw{color:var(--kw)}.c-str{color:var(--str)}.c-num{color:var(--num)}.c-com{color:var(--com);font-style:italic}
+
+/* options */
+.opts{display:flex;flex-direction:column;gap:9px;margin-top:6px}
+.opt{display:flex;align-items:flex-start;gap:11px;width:100%;text-align:left;
+  background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:10px;
+  padding:11px 13px;font-size:15px;font-family:var(--sans);cursor:pointer;
+  transition:background .15s,border-color .15s,transform .05s}
+.opt:hover:not(:disabled){background:var(--bg4);border-color:var(--line2)}
+.opt:active:not(:disabled){transform:translateY(1px)}
+.opt:disabled{cursor:default}
+.opt .mk{flex:none;width:22px;height:22px;border-radius:6px;border:1.5px solid var(--line2);
+  display:grid;place-items:center;font-family:var(--mono);font-size:12px;
+  color:var(--muted);margin-top:1px;transition:all .15s}
+.opt .lbl{flex:1}
+.opt .lbl code{font-family:var(--mono);font-size:13.5px;background:rgba(255,255,255,.06);
+  padding:1px 5px;border-radius:5px;color:#d7e6f5}
+.opt .lbl strong{color:#fff}
+.opt.sel{border-color:var(--cyan);background:rgba(92,200,255,.07)}
+.opt.sel .mk{border-color:var(--cyan);color:var(--cyan)}
+.opt.correct{border-color:var(--okln);background:var(--okbg)}
+.opt.correct .mk{border-color:var(--ok);background:var(--ok);color:#05130c}
+.opt.wrong{border-color:var(--badln);background:var(--badbg)}
+.opt.wrong .mk{border-color:var(--bad);background:var(--bad);color:#170505}
+.opt.missed{border-color:var(--warnln);background:var(--warnbg)}
+.opt.missed .mk{border-color:var(--warn);color:var(--warn)}
+
+.chk{margin-top:11px;font-family:var(--mono);font-size:13px;background:var(--bg4);
+  color:var(--txt);border:1px solid var(--line2);border-radius:9px;padding:8px 16px;
+  cursor:pointer;transition:background .15s}
+.chk:hover:not(:disabled){background:#2a3545}
+.chk:disabled{opacity:.4;cursor:default}
+
+/* feedback */
+.fb{display:none;margin-top:13px;border-radius:10px;padding:12px 14px;font-size:14.5px}
+.fb.show{display:block;animation:fade .25s ease}
+.fb .tag{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;display:inline-flex;align-items:center;gap:7px;margin-bottom:6px}
+.fb.right{background:var(--okbg);border:1px solid var(--okln)}
+.fb.right .tag{color:var(--ok)}
+.fb.miss{background:var(--badbg);border:1px solid var(--badln)}
+.fb.miss .tag{color:var(--bad)}
+.fb .exp{color:#d2dded;line-height:1.62}
+.fb .exp code{font-family:var(--mono);font-size:13px;background:rgba(255,255,255,.07);
+  padding:1px 5px;border-radius:5px;color:#e7f0fa}
+.fb .exp strong{color:#fff;font-weight:650}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* results */
+.rt{margin:30px 0}
+.btn{font-family:var(--mono);font-size:14px;border-radius:10px;padding:12px 20px;cursor:pointer;
+  border:1px solid var(--line2);background:var(--bg3);color:var(--txt);transition:all .15s}
+.btn:hover{background:var(--bg4);border-color:var(--cyan)}
+.btn.primary{background:linear-gradient(180deg,var(--crim-d),#c8455a);border-color:transparent;
+  color:#fff;font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.results{display:none;margin-top:20px;background:var(--bg2);border:1px solid var(--line2);
+  border-radius:16px;padding:22px}
+.results.show{display:block;animation:fade .3s}
+.results h2{font-family:var(--mono);font-size:14px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);margin:0 0 16px}
+.grade{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.grade .big{font-size:54px;font-weight:700;line-height:1;font-family:var(--mono)}
+.grade .of{font-size:22px;color:var(--dim);font-family:var(--mono)}
+.grade .pct{font-family:var(--mono);font-size:14px;color:var(--muted);
+  border:1px solid var(--line);border-radius:99px;padding:4px 12px}
+.msg{font-size:15px;color:var(--muted);margin:6px 0 18px}
+.tally{display:flex;gap:10px 22px;flex-wrap:wrap;font-family:var(--mono);font-size:13.5px;margin-bottom:18px}
+.tally b{font-size:15px}
+.t-ok b{color:var(--ok)}.t-bad b{color:var(--bad)}.t-na b{color:var(--warn)}
+.dotmap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.dotmap button{width:26px;height:26px;border-radius:7px;border:1px solid var(--line);
+  background:var(--bg3);color:var(--dim);font-family:var(--mono);font-size:10px;cursor:pointer;
+  display:grid;place-items:center;transition:transform .1s}
+.dotmap button:hover{transform:scale(1.15)}
+.d-ok{background:var(--okbg)!important;border-color:var(--okln)!important;color:var(--ok)!important}
+.d-bad{background:var(--badbg)!important;border-color:var(--badln)!important;color:var(--bad)!important}
+.res-act{display:flex;gap:10px;flex-wrap:wrap}
+
+/* section filter pills */
+.filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.pill{font-family:var(--mono);font-size:12px;padding:5px 12px;border-radius:99px;
+  border:1px solid var(--line);background:var(--bg3);color:var(--muted);cursor:pointer;transition:all .15s}
+.pill:hover{background:var(--bg4);color:var(--txt)}
+.pill.on{background:rgba(92,200,255,.12);border-color:var(--cyan);color:var(--cyan)}
+
+footer{margin-top:40px;text-align:center;font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:8px}
+@media(max-width:560px){body{font-size:15px}.intro h1{font-size:22px}.grade .big{font-size:44px}.wrap{padding:0 14px 80px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hdr">
+    <div class="tbar"><span class="dots"><i></i><i></i><i></i></span><span>student@uop</span><span class="path">: ~/diadikasiakos</span></div>
+    <div class="tcmd"><span class="pr">$</span> ./practice <span class="fl">--questions</span> <span class="vl">181</span> <span class="fl">--mode</span> <span class="vl">exam-prep</span></div>
+    <div class="srow">
+      <span>Απαντημένες: <b id="sa">0</b>/<b id="st">0</b></span>
+      <span class="ok">✓ Σωστές: <b id="so">0</b></span>
+      <span class="bad">✗ Λάθος: <b id="sb">0</b></span>
+      <span style="color:var(--warn)">Εναπομένουν: <b id="sr">0</b></span>
+    </div>
+    <div class="pbar"><div id="pb"></div></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="intro">
+    <h1>181 Ερωτήσεις C — <span>Πλήρης Εξάσκηση</span></h1>
+    <p class="sub">Εκτελεστές, ροή, πίνακες, δείκτες, συναρτήσεις, μνήμη, δομές, αλφαριθμητικά, θεωρία. Κάνε κλικ σε απάντηση → αμέσως εξήγηση.</p>
+    <div class="legend">
+      <span><i class="ld" style="background:var(--cyan)"></i> Τι τυπώνει;</span>
+      <span><i class="ld" style="background:var(--kw)"></i> Πολλαπλή Επιλογή</span>
+      <span><i class="ld" style="background:var(--warn)"></i> Πολλαπλές Απαντήσεις</span>
+      <span><i class="ld" style="background:var(--ok)"></i> Σωστό / Λάθος</span>
+      <span><i class="ld" style="background:var(--crim)"></i> Ναι / Όχι</span>
+    </div>
+    <p class="note">Φιλτράρισε με τα κουμπιά παρακάτω ή λύσε τα όλα. Μεθαύριο γράφεις — πάμε.</p>
+  </section>
+
+  <div class="filter" id="filter">
+    <button class="pill on" data-sec="0">Όλα (181)</button>
+    <button class="pill" data-sec="1">Τελεστές (25)</button>
+    <button class="pill" data-sec="2">Ροή (20)</button>
+    <button class="pill" data-sec="3">Πίνακες (19)</button>
+    <button class="pill" data-sec="4">Δείκτες (27)</button>
+    <button class="pill" data-sec="5">Συναρτήσεις (20)</button>
+    <button class="pill" data-sec="6">Δυν. Μνήμη (17)</button>
+    <button class="pill" data-sec="7">Δομές (16)</button>
+    <button class="pill" data-sec="8">Αλφαριθμητικά (18)</button>
+    <button class="pill" data-sec="9">Θεωρία (19)</button>
+  </div>
+
+  <div id="quiz"></div>
+  <div class="rt"><button class="btn primary" id="sr2">Δες αποτέλεσμα &amp; βαθμό ▸</button></div>
+  <section class="results" id="results"></section>
+  <footer>Καλή επιτυχία. // πάντα με gcc -Wall -Wextra</footer>
+</div>
+
+<script>
+const Q = [{"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5, b;\nb = a++ + 5;\nprintf(\"%d %d\", a, b);", "opts": ["5 10", "6 10", "6 11", "5 9"], "ans": 1, "exp": "Το `a++` επιστρέφει πρώτα **5** (b=5+5=10), μετά αυξάνει `a` σε **6**. Output: `6 10`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "printf(\"%d\", 10%3);", "opts": ["0", "1", "3", "10"], "ans": 1, "exp": "`%` = υπόλοιπο ακέραιας διαίρεσης. `10=3×3+1` → υπόλοιπο `1`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=7;\na >>= 1;\nprintf(\"%d\", a);", "opts": ["7", "14", "3", "1"], "ans": 2, "exp": "`>>=1`: ολίσθηση δεξιά κατά 1. `7(0111)>>1=3(0011)`. Ισοδυναμεί με `a=a/2` (ακέραια)."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "printf(\"%d\", 5 & 3);", "opts": ["7", "1", "15", "0"], "ans": 1, "exp": "Bitwise AND: `5=101`, `3=011`. `101&011=001=1`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "printf(\"%d\", 5 | 3);", "opts": ["7", "1", "2", "0"], "ans": 0, "exp": "Bitwise OR: `5=101`, `3=011`. `101|011=111=7`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=10;\nprintf(\"%d\", a++);", "opts": ["11", "10", "9", "0"], "ans": 1, "exp": "Μεταθεματική: **πρώτα** τυπώνεται `10`, **μετά** `a=11`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=10;\nprintf(\"%d\", ++a);", "opts": ["11", "10", "9", "0"], "ans": 0, "exp": "Προθεματική: **πρώτα** `a=11`, **μετά** τυπώνεται `11`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει; (ΠΑΓΙΔΑ)", "code": "float f = 5/2;\nprintf(\"%.1f\", f);", "opts": ["2.5", "2.0", "2", "σφάλμα"], "ans": 1, "exp": "ΠΑΓΙΔΑ: `5/2` = **ακέραια** διαίρεση = `2`. Αποθηκεύεται ως float `2.0`. Για `2.5` χρειάζεται `5.0/2`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "float f = 5.0/2;\nprintf(\"%.1f\", f);", "opts": ["2.5", "2.0", "2", "σφάλμα"], "ans": 0, "exp": "`5.0` = float literal → `5.0/2` = float διαίρεση = `2.5`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "printf(\"%d\", (int)3.9);", "opts": ["4", "3", "3.9", "0"], "ans": 1, "exp": "Cast `(int)` **αποκόπτει** χωρίς στρογγυλοποίηση. `(int)3.9=3`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=0;\nprintf(\"%d\", a || 5);", "opts": ["5", "0", "1", "σφάλμα"], "ans": 2, "exp": "Λογικός OR `||` επιστρέφει **1** ή **0** — ποτέ την τιμή του όρου. `0||5=1`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=3, b=4;\nprintf(\"%d\", a>b ? a : b);", "opts": ["3", "4", "7", "1"], "ans": 1, "exp": "Τριαδικός: `3>4`=ψευδές → επιλέγεται `b=4`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5;\nprintf(\"%d %d\", a\u003c10, a>10);", "opts": ["1 0", "0 1", "1 1", "0 0"], "ans": 0, "exp": "Εκφράσεις σύγκρισης: αληθές=1, ψευδές=0. `5\u003c10=1`, `5>10=0`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει; (int=4 bytes)", "code": "printf(\"%d\", sizeof(int)*2);", "opts": ["2", "4", "8", "16"], "ans": 2, "exp": "`sizeof(int)=4`. `4×2=8`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5, b=2;\nprintf(\"%d\", a/b + a%b);", "opts": ["3", "2", "4", "2.5"], "ans": 0, "exp": "`5/2=2` (ακέραια), `5%2=1`. `2+1=3`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "printf(\"%d\", !0);", "opts": ["0", "1", "-1", "σφάλμα"], "ans": 1, "exp": "Λογικός NOT: `!0=1` (0 είναι ψευδές, η άρνησή του αληθές=1)."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "printf(\"%d\", !!5);", "opts": ["5", "0", "1", "-1"], "ans": 2, "exp": "`!5=0`, `!0=1`. Άρα `!!5=1`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "printf(\"%d\", 15 ^ 9);", "opts": ["6", "7", "14", "5"], "ans": 0, "exp": "XOR: `15=1111`, `9=1001`. `1111^1001=0110=6`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "printf(\"%d\", ~0);", "opts": ["0", "1", "-1", "255"], "ans": 2, "exp": "Bitwise NOT `~0`: αντιστρέφει όλα τα bits. Σε 2's complement: `-1`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=4;\nprintf(\"%d\", a\u003c\u003c1);", "opts": ["8", "2", "4", "16"], "ans": 0, "exp": "Αριστερή ολίσθηση: `4\u003c\u003c1=8`. Ισοδυναμεί με `×2`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=2, b=3, c;\nc = a+b>4 && b-a\u003c3;\nprintf(\"%d\", c);", "opts": ["1", "0", "5", "σφάλμα"], "ans": 0, "exp": "`5>4`=true, `1\u003c3`=true. `true&&true=1`."}, {"sec": 1, "kind": "tf", "q": "Ο κώδικας `float x = 3;` είναι έγκυρος στη C.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. Ο `int 3` μετατρέπεται **σιωπηλά** σε `float 3.0f`. Δεν απαιτείται ρητό cast για ανοδικές μετατροπές (int→float)."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int x;\nx = (0 == 0);\nprintf(\"%d\", x);", "opts": ["0", "1", "σφάλμα", "απροσδιόριστο"], "ans": 1, "exp": "`0==0`=αληθές=`1`. Αποθηκεύεται στο `x` και τυπώνεται."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5;\na *= 2;\na -= 3;\nprintf(\"%d\", a);", "opts": ["7", "4", "10", "5"], "ans": 0, "exp": "`a=5 → *=2 → a=10 → -=3 → a=7`."}, {"sec": 1, "kind": "output", "q": "Τι τυπώνει; (ΔΥΣΚΟΛΟ — undefined behavior)", "code": "int a=3;\nprintf(\"%d %d %d\", a++, ++a, a);", "opts": ["3 5 5", "4 5 5", "3 4 4", "απροσδιόριστο"], "ans": 3, "exp": "ΠΑΓΙΔΑ: Η **σειρά αποτίμησης** ορισμάτων της `printf` είναι **απροσδιόριστη** στη C. Διαφορετικοί compilers → διαφορετικά αποτελέσματα = **undefined behavior**."}, {"sec": 2, "kind": "output", "q": "Πόσες φορές εκτελείται ο βρόχος;", "code": "int *p = NULL;\ndo {\n  printf(\"loop!!\\n\");\n} while(p);", "opts": ["0", "1", "άπειρες", "άγνωστο"], "ans": 1, "exp": "`do-while` εκτελεί **πρώτα** το σώμα, **μετά** ελέγχει. Το `p=NULL=0=ψευδές` → σταματά μετά από **1** εκτέλεση."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει;", "code": "int i=0;\nwhile(i\u003c5) i+=2;\nprintf(\"%d\", i);", "opts": ["4", "5", "6", "0"], "ans": 2, "exp": "i: 0→2→4→6. Στο `i=6`, `6\u003c5`=ψευδές. Τυπώνεται `6`."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει;", "code": "int sum=0;\nfor(int i=1; i\u003c=5; i++) sum += i;\nprintf(\"%d\", sum);", "opts": ["15", "10", "5", "20"], "ans": 0, "exp": "1+2+3+4+5=**15**."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει; (fall-through)", "code": "int x=2;\nswitch(x) {\n  case 1: printf(\"one\");\n  case 2: printf(\"two\");\n  case 3: printf(\"three\"); break;\n  default: printf(\"none\");\n}", "opts": ["two", "twothree", "onetwo", "twothreenone"], "ans": 1, "exp": "Ταιριάζει `case 2` → `two`. Χωρίς `break` → fall-through σε `case 3` → `three`. Σύνολο: **twothree**."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει;", "code": "for(int i=10; i>0; i-=3) printf(\"%d \", i);", "opts": ["10 7 4 1", "10 7 4", "10 7", "10 7 4 1 -2"], "ans": 0, "exp": "i=10,7,4,1. Μετά `-2>0`=ψευδές. Output: `10 7 4 1`."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει;", "code": "int n=1;\ndo { n *= 2; } while(n \u003c 10);\nprintf(\"%d\", n);", "opts": ["8", "10", "16", "2"], "ans": 2, "exp": "n: 1→2→4→8→16. Στο `n=16`, `16\u003c10`=ψευδές → τυπώνεται **16**."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει;", "code": "int sum=0;\nfor(int i=0; i\u003c5; i++)\n  if(i%2==0) sum+=i;\nprintf(\"%d\", sum);", "opts": ["6", "4", "10", "0"], "ans": 0, "exp": "Άρτιοι i: 0(sum=0), 2(sum=2), 4(sum=6). Σύνολο **6**."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει;", "code": "int i=5;\nwhile(i--) printf(\"%d \", i);", "opts": ["5 4 3 2 1", "4 3 2 1 0", "5 4 3 2 1 0", "4 3 2 1"], "ans": 1, "exp": "`i--`: ελέγχει πρώτα i, μετά μειώνει. i=5(true)→i=4→print 4, ..., i=1(true)→i=0→print 0, i=0(false)→stop. Output: `4 3 2 1 0`."}, {"sec": 2, "kind": "tf", "q": "Ο βρόχος `for(;;)` είναι άπειρος βρόχος.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. Χωρίς συνθήκη θεωρείται **πάντα αληθής**. Σταματά μόνο με `break`/`return`/`exit()`."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει; (ΠΑΓΙΔΑ)", "code": "int x=5;\nif(x=3) printf(\"yes\");\nelse printf(\"no\");", "opts": ["yes", "no", "σφάλμα", "τίποτα"], "ans": 0, "exp": "ΠΑΓΙΔΑ: `x=3` = **ανάθεση** (επιστρέφει 3=αληθές) → `yes`. Σύγκριση θα ήταν `x==3`."}, {"sec": 2, "kind": "single", "q": "Τι κάνει η `continue` μέσα σε βρόχο;", "opts": ["Τερματίζει το πρόγραμμα", "Βγαίνει από τον βρόχο", "Παρακάμπτει το υπόλοιπο της τρέχουσας επανάληψης → επόμενη", "Επαναλαμβάνει την ίδια επανάληψη"], "ans": 2, "exp": "`continue` παρακάμπτει τις υπόλοιπες εντολές του **τρέχοντος κύκλου** → επόμενη επανάληψη. Το `break` **βγαίνει** από τον βρόχο."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει;", "code": "for(int i=0; i\u003c3; i++) {\n  if(i==1) continue;\n  for(int j=0; j\u003c2; j++) printf(\"%d%d \", i, j);\n}", "opts": ["00 01 10 11 20 21", "00 01 20 21", "00 10 11 20", "00 20"], "ans": 1, "exp": "Όταν `i=1`, `continue` παρακάμπτει ολόκληρο τον εσωτερικό βρόχο. Τυπώνονται: `00 01` (i=0) και `20 21` (i=2)."}, {"sec": 2, "kind": "single", "q": "Πόσες φορές εκτελείται: `for(int i=0; i\u003c10; i+=3)`", "opts": ["3", "4", "10", "άγνωστο"], "ans": 1, "exp": "i=0,3,6,9 → **4** επαναλήψεις. Στο `i=12`, `12\u003c10`=ψευδές."}, {"sec": 2, "kind": "tf", "q": "Ο `do-while` εγγυάται εκτέλεση του σώματος τουλάχιστον μία φορά.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. Σώμα **πρώτα**, συνθήκη **μετά**. Ακόμα και αν η συνθήκη είναι ψευδής εξαρχής."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει;", "code": "int x=5;\nswitch(x) {\n  case 1: printf(\"one\");\n  case 5: printf(\"five\");\n  default: printf(\"def\");\n}", "opts": ["five", "fivedef", "def", "onefivedEf"], "ans": 1, "exp": "Ταιριάζει `case 5` → `five`. Χωρίς `break` → fall-through στο `default` → `def`. Σύνολο: **fivedef**."}, {"sec": 2, "kind": "tf", "q": "Η `break` μπορεί να χρησιμοποιηθεί για έξοδο από εντολή `if` (εκτός βρόχου/switch).", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** Η `break` λειτουργεί **μόνο** μέσα σε `for`/`while`/`do-while`/`switch`. Σε `if` μόνο — δεν υπάρχει."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει;", "code": "for(int i=0; i\u003c3; i++) {\n  for(int j=0; j\u003c3; j++) {\n    if(j==1) break;\n    printf(\"%d \", j);\n  }\n}", "opts": ["0 0 0", "0 1 2 0 1 2 0 1 2", "0 1 0 1 0 1", "τίποτα"], "ans": 0, "exp": "Εσωτερικός: j=0(print), j=1(break). Επαναλαμβάνεται 3 φορές. Output: `0 0 0`."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει;", "code": "int i=1;\nwhile(i\u003c=100) { i*=2; if(i>50) break; }\nprintf(\"%d\", i);", "opts": ["64", "50", "100", "128"], "ans": 0, "exp": "i: 1→2→4→8→16→32→64. `64>50`→break. Τυπώνεται **64**."}, {"sec": 2, "kind": "output", "q": "Τι τυπώνει; (ΔΥΣΚΟΛΟ — `goto`)", "code": "int i=3, j=0;\nfor(; i; i--)\n  for(j=0; j\u003ci; j++)\n    if(j==1) goto done;\ndone:\nprintf(\"%d %d\", i, j);", "opts": ["3 1", "2 1", "0 0", "σφάλμα"], "ans": 0, "exp": "Εξωτερικός i=3. Εσωτερικός: j=0(ok), j=1 → `goto done`. Πηδάει στο label με i=3, j=1. Output: **3 1**."}, {"sec": 2, "kind": "tf", "q": "Η εντολή `for(int i=0; ; i++)` είναι άπειρος βρόχος.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. Η **μεσαία** έκφραση (συνθήκη) λείπει → θεωρείται αληθής → άπειρος βρόχος."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[3]={1,2,3};\nprintf(\"%d\", *A);", "opts": ["1", "2", "3", "0"], "ans": 0, "exp": "`A` ως έκφραση = δείκτης στο πρώτο στοιχείο. `*A=A[0]=1`."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[5]={1,2,3};\nprintf(\"%d\", A[4]);", "opts": ["0", "3", "απροσδιόριστο", "σφάλμα"], "ans": 0, "exp": "Αρχικοποίηση με λιγότερες τιμές → τα υπόλοιπα **μηδενίζονται**. `A[3]=0`, `A[4]=0`."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[3]={1,2,3};\nprintf(\"%d\", *(A+1));", "opts": ["1", "2", "3", "0"], "ans": 1, "exp": "`*(A+1)=A[1]=2`. Αριθμητική δεικτών."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[2][3]={{1,2,3},{4,5,6}};\nprintf(\"%d\", A[0][2]);", "opts": ["3", "6", "4", "2"], "ans": 0, "exp": "`A[0]={1,2,3}`. `A[0][2]=3`."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[2][3]={{1,2,3},{4,5,6}};\nprintf(\"%d\", A[1][0]);", "opts": ["1", "4", "3", "6"], "ans": 1, "exp": "`A[1]={4,5,6}`. `A[1][0]=4`."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[3]={1,2,3};\nint *p = A;\np++;\nprintf(\"%d\", *p);", "opts": ["1", "2", "3", "0"], "ans": 1, "exp": "`p=A`→A[0]. `p++`→A[1]=**2**."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[4]={10,20,30,40};\nprintf(\"%d\", A[1]+A[2]);", "opts": ["30", "50", "70", "60"], "ans": 1, "exp": "`A[1]=20`, `A[2]=30`. `20+30=50`."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[3]={1,2,3};\nint *p = &A[1];\nprintf(\"%d\", *(p-1));", "opts": ["1", "2", "3", "0"], "ans": 0, "exp": "`p`→A[1]. `p-1`→A[0]=**1**."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει; (int=4 bytes)", "code": "int A[5]={1,4,2,5,3};\nprintf(\"%d\", A[sizeof(A)/sizeof(A[0])-1]);", "opts": ["3", "5", "2", "1"], "ans": 0, "exp": "`sizeof(A)=20`, `sizeof(A[0])=4`. `20/4=5`. `5-1=4`. `A[4]=3`."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[3]={1,2,3};\nA[1] = A[0] + A[2];\nprintf(\"%d\", A[1]);", "opts": ["4", "2", "3", "5"], "ans": 0, "exp": "`A[0]=1`, `A[2]=3`. `A[1]=1+3=4`."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[3]={0};\nA[1]=5;\nprintf(\"%d %d %d\", A[0], A[1], A[2]);", "opts": ["0 5 0", "5 5 5", "0 5 5", "5 0 0"], "ans": 0, "exp": "`{0}` μηδενίζει όλον τον πίνακα. Μετά `A[1]=5` → `0 5 0`."}, {"sec": 3, "kind": "tf", "q": "Ο πίνακας `int A[3]` αποθηκεύεται σε **συνεχόμενες** θέσεις μνήμης.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. Αυτό επιτρέπει την αριθμητική δεικτών και γρήγορη πρόσβαση."}, {"sec": 3, "kind": "single", "q": "Τι τυπώνει η `printf(\"%d\", sizeof(arr))` μέσα σε `void f(int arr[])` για `int A[10]`; (64bit)", "opts": ["40", "10", "8", "σφάλμα"], "ans": 2, "exp": "Στη δήλωση `int arr[]` ισοδυναμεί με `int *arr` — **δείκτης**. `sizeof(δείκτης)=8` (64bit)."}, {"sec": 3, "kind": "tf", "q": "Η πρόσβαση `A[5]` σε `int A[5]` εγγυάται σφάλμα μεταγλώττισης.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** Η C **δεν κάνει** έλεγχο ορίων. `A[5]` είναι **undefined behavior** αλλά συνήθως μεταγλωττίζεται χωρίς σφάλμα."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[3][3]={{1,2,3},{4,5,6},{7,8,9}};\nint *p = &A[0][0];\nprintf(\"%d\", *(p+4));", "opts": ["5", "4", "6", "3"], "ans": 0, "exp": "Row-major: ...A[1][0]=4,**A[1][1]=5**. `p+4`→A[1][1]=**5**."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[3]={10,20,30};\nfor(int i=2; i>=0; i--) printf(\"%d \", A[i]);", "opts": ["30 20 10", "10 20 30", "10 30 20", "20 10 30"], "ans": 0, "exp": "Ανάποδη: i=2→30, 1→20, 0→10. Output: `30 20 10`."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[2][2]={{1,2},{3,4}};\nprintf(\"%d\", A[1][1]);", "opts": ["1", "2", "3", "4"], "ans": 3, "exp": "`A[1][1]` = δεύτερη γραμμή, δεύτερη στήλη = **4**."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[5];\nint *p = A;\nprintf(\"%d\", p == A);", "opts": ["1", "0", "σφάλμα", "απροσδιόριστο"], "ans": 0, "exp": "`p=A` → ίδια διεύθυνση. `p==A`=**1**."}, {"sec": 3, "kind": "output", "q": "Τι τυπώνει; (ΔΥΣΚΟΛΟ — in-place reverse)", "code": "int A[3]={1,3,5};\nint *p=A, *q=A+2;\nwhile(p\u003cq) {\n  int t=*p; *p=*q; *q=t;\n  p++; q--;\n}\nfor(int i=0;i\u003c3;i++) printf(\"%d \",A[i]);", "opts": ["5 3 1", "1 3 5", "5 1 3", "3 1 5"], "ans": 0, "exp": "Ανταλλαγή από άκρα: swap(A[0]=1, A[2]=5) → A={5,3,1}. Μετά p=A[1], q=A[1] → `p\u003cq`=ψευδές. Αποτέλεσμα: **5 3 1**."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5;\nint *p = &a;\n*p = 10;\nprintf(\"%d\", a);", "opts": ["5", "10", "0", "σφάλμα"], "ans": 1, "exp": "`*p=10` γράφει **άμεσα** στη θέση `a`. Άρα `a=10`."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5, b=10;\nint *p = &a;\np = &b;\nprintf(\"%d\", *p);", "opts": ["5", "10", "15", "σφάλμα"], "ans": 1, "exp": "`p=&b` → ο δείκτης αλλάζει και δείχνει στο `b=10`."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5;\nint *p = &a;\nprintf(\"%d\", *p + 1);", "opts": ["5", "6", "1", "σφάλμα"], "ans": 1, "exp": "`*p=a=5`. `*p+1=6`. (Προτεραιότητα: `*` > `+`)"}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[5]={1,2,3,4,5};\nint *p = A;\nprintf(\"%d\", *(p+2));", "opts": ["1", "2", "3", "4"], "ans": 2, "exp": "`p=A`→A[0]. `p+2`→A[2]=**3**."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5;\nint *p = &a;\nint **pp = &p;\nprintf(\"%d\", **pp);", "opts": ["5", "&a", "&p", "σφάλμα"], "ans": 0, "exp": "`**pp`: πρώτα `*pp=p`, μετά `*p=a=5`. Δύο αποαναφέρωσεις."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5;\nint *p = &a;\n(*p)++;\nprintf(\"%d\", a);", "opts": ["5", "6", "1", "σφάλμα"], "ans": 1, "exp": "`(*p)++` αυξάνει την **τιμή** που δείχνει ο p → `a=6`."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int arr[2]={5,10};\nint *p = arr;\nprintf(\"%d \", *p++);\nprintf(\"%d\", *p);", "opts": ["5 10", "10 5", "10 10", "5 5"], "ans": 0, "exp": "`*p++`=`*(p++)`: τιμή=5 (παλιά), μετά p→arr[1]. Δεύτερο: `*p=10`. Output: **5 10**."}, {"sec": 4, "kind": "tf", "q": "Έστω `int *p;` (τοπική, μη αρχικοποιημένη). Η `*p=5;` είναι πάντα undefined behavior.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. `p` δείχνει σε τυχαία διεύθυνση → **UB** (συνήθως segfault)."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5;\nvoid *vp = &a;\nprintf(\"%d\", *(int*)vp);", "opts": ["5", "0", "σφάλμα", "απροσδιόριστο"], "ans": 0, "exp": "`void*` = γενικός δείκτης. Cast `(int*)vp`, μετά αποαναφέρωση → **5**."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[5]={1,2,3,4,5};\nprintf(\"%d\", *A+1);", "opts": ["1", "2", "3", "σφάλμα"], "ans": 1, "exp": "`*A=A[0]=1`. `*A+1=2`. (`*` έχει μεγαλύτερη προτεραιότητα από `+`)"}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5;\nint *p = &a;\nprintf(\"%d\", p == &a);", "opts": ["1", "0", "5", "σφάλμα"], "ans": 0, "exp": "`p=&a` → `p==&a`=αληθές=**1**."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[3]={1,2,3};\nint *p = A+1;\nprintf(\"%d %d\", p[-1], p[1]);", "opts": ["1 3", "0 3", "1 2", "2 3"], "ans": 0, "exp": "`p`→A[1]. `p[-1]=A[0]=1`. `p[1]=A[2]=3`."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5, b=3;\nint *p = &a;\n*p += b;\nprintf(\"%d\", a);", "opts": ["8", "5", "3", "σφάλμα"], "ans": 0, "exp": "`*p+=3` → `a=5+3=8`."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[5]={1,2,3,4,5};\nint *p = A+4;\nprintf(\"%d\", (int)(p-A));", "opts": ["4", "5", "20", "1"], "ans": 0, "exp": "Αφαίρεση δεικτών = αριθμός **στοιχείων** μεταξύ τους = **4**."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5, b=10;\nint *p = &a, *q = p;\n*q = 20;\nprintf(\"%d\", a);", "opts": ["5", "20", "10", "0"], "ans": 1, "exp": "`q=p=&a` → και οι δύο δείχνουν στην `a`. `*q=20` → `a=20`."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "char *p = \"Hello\";\nprintf(\"%c\", *(p+1));", "opts": ["H", "e", "l", "ε"], "ans": 1, "exp": "`p+1` → δεύτερος χαρακτήρας = **'e'**."}, {"sec": 4, "kind": "single", "q": "Σε 64bit σύστημα, πόσα bytes έχει ένας `double*` δείκτης;", "opts": ["4", "8", "2", "16"], "ans": 1, "exp": "Σε 64bit, **κάθε** δείκτης (ανεξαρτήτως τύπου) = **8** bytes."}, {"sec": 4, "kind": "tf", "q": "Πίνακες και δείκτες είναι πανομοιότυποι (identical) στη C.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** `sizeof(int A[10])=40`, `sizeof(int *p)=8`. Ο πίνακας δεν μπορεί να «επανατοποθετηθεί» — δεν είναι lvalue."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=10;\nint *p = NULL;\nif(p) printf(\"%d\", *p);\nelse printf(\"%d\", a);", "opts": ["10", "0", "σφάλμα", "τίποτα"], "ans": 0, "exp": "`p=NULL=0`=ψευδές → `else` → τυπώνεται `a=10`."}, {"sec": 4, "kind": "tf", "q": "Η έκφραση `A[i]` είναι ακριβώς ισοδύναμη με `*(A+i)`.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. Αυτός είναι ο **ορισμός** της πρόσβασης σε πίνακα. Άρα `i[A]` είναι επίσης νόμιμο (αν και άσχημο style)."}, {"sec": 4, "kind": "single", "q": "Τι είναι ένας dangling pointer;", "opts": ["Δείκτης σε NULL", "Δείκτης που δείχνει σε μνήμη που δεν ισχύει (μετά free ή scope)", "Δείκτης διπλής αποαναφέρωσης", "Μη αρχικοποιημένος δείκτης"], "ans": 1, "exp": "**Dangling pointer**: δείχνει σε **άκυρη** μνήμη (π.χ. μετά `free()` ή βγήκε από scope). Χρήση → **undefined behavior**."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει; (ΔΥΣΚΟΛΟ — `*p++`)", "code": "int a=5;\nint *p = &a;\n*p++;\nprintf(\"%d %d\", a, *p);", "opts": ["6 τυχαίο", "5 τυχαίο", "6 5", "σφάλμα"], "ans": 1, "exp": "ΠΑΓΙΔΑ: `*p++`=`*(p++)`. Αυξάνει τον **δείκτη** `p`, **ΟΧΙ** την τιμή `a`. `a` παραμένει `5`. Το νέο `*p` δείχνει σε άγνωστη μνήμη (τυχαίο ή crash)."}, {"sec": 4, "kind": "single", "q": "Τι δηλώνει η `const int *p`;", "opts": ["O p δεν αλλάζει κατεύθυνση", "Η τιμή που δείχνει ο p δεν αλλάζει μέσω p", "Τίποτα δεν αλλάζει", "Σφάλμα"], "ans": 1, "exp": "`const int *p` = **pointer to const**: `*p=5` απαγορεύεται, αλλά `p=&other` επιτρέπεται. Αντίθετο: `int * const p` = η **κατεύθυνση** σταθερή."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int A[3]={10,20,30};\nint *p=A;\nprintf(\"%d \", *p++);\nprintf(\"%d \", *p++);\nprintf(\"%d\", *p);", "opts": ["10 20 30", "10 20 20", "20 30 30", "10 10 20"], "ans": 0, "exp": "1ο: `*p++=10`, p→A[1]. 2ο: `*p++=20`, p→A[2]. 3ο: `*p=30`. Output: **10 20 30**."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει;", "code": "int a=5;\nprintf(\"%d\", &a == &(*(&a)));", "opts": ["1", "0", "σφάλμα", "απροσδιόριστο"], "ans": 0, "exp": "`&(*(&a))=&a`. Οι `&` και `*` αλληλοαναιρούνται. `&a==&a`=**1**."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει; (ΔΥΣΚΟΛΟ)", "code": "int A[3]={1,2,3};\nint *p=A, *q=A+2;\nwhile(p\u003c=q) {\n  printf(\"%d \", *p + *q);\n  p++; q--;\n}", "opts": ["4 4 4", "4 4", "2 6", "1 5 3"], "ans": 1, "exp": "Βήμα 1: p=A[0]=1, q=A[2]=3 → 1+3=**4**. Βήμα 2: p=A[1]=2, q=A[1]=2 → 2+2=**4**. Βήμα 3: p=A[2], q=A[0] → `p>q` → stop. Output: **4 4**."}, {"sec": 4, "kind": "output", "q": "Τι τυπώνει; (ΔΥΣΚΟΛΟ)", "code": "int x=1, y=2;\nint *a=&x, *b=&y;\nint **c=&a;\n*c=b;\nprintf(\"%d %d\", *a, x);", "opts": ["2 1", "1 2", "2 2", "1 1"], "ans": 0, "exp": "`*c=b` → `a=b=&y`. Τώρα `*a=*b=y=2`. Η `x` δεν άλλαξε (`x=1`). Output: **2 1**."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "int f(int a, int b) { return a>b ? a : b; }\nprintf(\"%d\", f(3, f(1, 5)));", "opts": ["5", "3", "1", "6"], "ans": 0, "exp": "`f(1,5)=5`. `f(3,5)=5`. Τυπώνεται **5**."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "int fib(int n) {\n  if(n\u003c=1) return n;\n  return fib(n-1) + fib(n-2);\n}\nprintf(\"%d\", fib(6));", "opts": ["8", "13", "5", "6"], "ans": 0, "exp": "Fibonacci: f(0)=0,f(1)=1,f(2)=1,f(3)=2,f(4)=3,f(5)=5,**f(6)=8**."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "int fact(int n) {\n  return n\u003c=1 ? 1 : n*fact(n-1);\n}\nprintf(\"%d\", fact(5));", "opts": ["120", "24", "60", "25"], "ans": 0, "exp": "5!=5×4×3×2×1=**120**."}, {"sec": 5, "kind": "tf", "q": "Μια συνάρτηση C μπορεί να επιστρέψει έναν πίνακα.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** Η C **δεν επιτρέπει** επιστροφή πίνακα. Μπορεί να επιστρέψει δείκτη ή δυναμικά δεσμευμένη μνήμη."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "int global=10;\nvoid f() { int global=20; printf(\"%d\", global); }\nf();", "opts": ["10", "20", "σφάλμα", "0"], "ans": 1, "exp": "Η τοπική `global` **σκιάζει** (shadows) την καθολική. Μέσα στην `f` τυπώνεται **20**."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "void f() {\n  static int count=0;\n  count++;\n  printf(\"%d \", count);\n}\nf(); f(); f();", "opts": ["1 1 1", "0 1 2", "1 2 3", "1 2 2"], "ans": 2, "exp": "`static` τοπική: αρχικοποιείται **μία φορά** και **διατηρείται** μεταξύ κλήσεων. Output: **1 2 3**."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "void f(int *a) { *a=100; }\nint x=5;\nf(&x);\nprintf(\"%d\", x);", "opts": ["5", "100", "0", "σφάλμα"], "ans": 1, "exp": "Πέρασμα με αναφορά (δείκτη). `*a=100` αλλάζει **άμεσα** την `x`. Τυπώνεται **100**."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "int f(int n) {\n  if(n\u003c=0) return 0;\n  return n+f(n-1);\n}\nprintf(\"%d\", f(4));", "opts": ["4", "10", "6", "14"], "ans": 1, "exp": "`f(4)=4+f(3)=4+3+f(2)=4+3+2+f(1)=4+3+2+1+f(0)=10`."}, {"sec": 5, "kind": "single", "q": "Τι είναι πρότυπο (prototype) συνάρτησης;", "opts": ["Η υλοποίηση της συνάρτησης", "Δήλωση χωρίς σώμα που ενημερώνει τον compiler", "Η πρώτη κλήση", "Η συνάρτηση main"], "ans": 1, "exp": "Πρότυπο: **δήλωση** (τύπος επιστροφής + όνομα + τύποι παραμέτρων) χωρίς σώμα. Π.χ. `int f(int x);`."}, {"sec": 5, "kind": "tf", "q": "Σε `void` συνάρτηση μπορούμε να χρησιμοποιήσουμε `return;` χωρίς τιμή.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. `return;` (χωρίς τιμή) σε void συνάρτηση τερματίζει την εκτέλεση. Απαγορεύεται μόνο `return \u003cτιμή>;`."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "int double_it(int x) { return x*2; }\nint main() {\n  int a=5, b=double_it(a);\n  printf(\"%d %d\", a, b);\n}", "opts": ["5 10", "10 10", "5 5", "10 5"], "ans": 0, "exp": "Πέρασμα με τιμή: `b=double_it(5)=10`. Η `a` δεν αλλάζει. Output: **5 10**."}, {"sec": 5, "kind": "single", "q": "Μια μη-void συνάρτηση που δεν εκτελεί `return` τι κάνει;", "opts": ["Επιστρέφει 0", "Επιστρέφει NULL", "Undefined behavior", "Σφάλμα μεταγλώττισης"], "ans": 2, "exp": "Αν μη-void συνάρτηση τερματίσει χωρίς `return`, το αποτέλεσμα είναι **undefined behavior**."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "int power(int b, int e) {\n  if(e==0) return 1;\n  return b*power(b, e-1);\n}\nprintf(\"%d\", power(2, 8));", "opts": ["256", "16", "128", "512"], "ans": 0, "exp": "`power(2,8)=2^8=256`."}, {"sec": 5, "kind": "single", "q": "Η συνάρτηση `sqrt()` ανήκει στη βιβλιοθήκη:", "opts": ["stdio.h", "stdlib.h", "math.h", "string.h"], "ans": 2, "exp": "`sqrt()` (και `sin`, `cos`, `pow`, κ.α.) βρίσκεται στη **math.h**. Χρειάζεται και `-lm` κατά τη μεταγλώττιση."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "void swap(int *a, int *b) {\n  int t=*a; *a=*b; *b=t;\n}\nint x=1, y=2;\nswap(&x, &y);\nprintf(\"%d %d\", x, y);", "opts": ["1 2", "2 1", "1 1", "2 2"], "ans": 1, "exp": "Ανταλλαγή με δείκτες (pass by reference): `x=2`, `y=1`. Output: **2 1**."}, {"sec": 5, "kind": "tf", "q": "Στη C μπορείς να ορίσεις συνάρτηση μέσα σε άλλη συνάρτηση (nested function).", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** Η C δεν υποστηρίζει nested functions. Ορισμοί συναρτήσεων μόνο στο global scope."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει;", "code": "int f(int x) { return x*2+1; }\nint g(int x) { return f(x)+1; }\nprintf(\"%d\", g(3));", "opts": ["8", "7", "6", "9"], "ans": 0, "exp": "`f(3)=3*2+1=7`. `g(3)=f(3)+1=7+1=8`."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει; (pre-order recursion)", "code": "void f(int n) {\n  if(n==0) return;\n  printf(\"%d \", n);\n  f(n-1);\n}\nf(4);", "opts": ["4 3 2 1", "1 2 3 4", "4 3 2 1 0", "0 1 2 3 4"], "ans": 0, "exp": "Κάθε κλήση τυπώνει **πριν** την αναδρομή → **4 3 2 1**."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει; (post-order recursion)", "code": "void f(int n) {\n  if(n==0) return;\n  f(n-1);\n  printf(\"%d \", n);\n}\nf(4);", "opts": ["4 3 2 1", "1 2 3 4", "0 1 2 3", "4 3 2 1 0"], "ans": 1, "exp": "Κάθε κλήση τυπώνει **μετά** την αναδρομή → ανεστραμμένη σειρά: **1 2 3 4**."}, {"sec": 5, "kind": "output", "q": "Τι τυπώνει; (ΔΥΣΚΟΛΟ)", "code": "int x=0;\nvoid inc() { x++; }\nvoid inc2() { inc(); inc(); }\ninc2(); inc2(); inc();\nprintf(\"%d\", x);", "opts": ["3", "4", "5", "6"], "ans": 2, "exp": "`inc2()` καλεί `inc()` 2 φορές. `inc2(); inc2()` → `x=4`. `inc()` → `x=5`. Output: **5**."}, {"sec": 6, "kind": "single", "q": "Τι επιστρέφει η `malloc` αν αποτύχει η δέσμευση;", "opts": ["0", "1", "NULL", "-1"], "ans": 2, "exp": "Σε αποτυχία, `malloc` επιστρέφει **NULL**. Πρέπει πάντα να ελέγχεις `if(p==NULL)`."}, {"sec": 6, "kind": "tf", "q": "Η `calloc` μηδενίζει τη μνήμη που δεσμεύει.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. `calloc(n, size)` δεσμεύει μνήμη **ΚΑΙ** μηδενίζει όλα τα bytes. Η `malloc` αφήνει «σκουπίδια»."}, {"sec": 6, "kind": "output", "q": "Τι τυπώνει;", "code": "int *p=(int*)calloc(5, sizeof(int));\nprintf(\"%d\", p[3]);", "opts": ["0", "σκουπίδια", "σφάλμα", "NULL"], "ans": 0, "exp": "`calloc` μηδενίζει → `p[3]=0`."}, {"sec": 6, "kind": "output", "q": "Τι τυπώνει;", "code": "int *p=malloc(sizeof(int)*5);\nfor(int i=0;i\u003c5;i++) p[i]=i*2;\nprintf(\"%d\", p[3]);\nfree(p);", "opts": ["6", "4", "8", "3"], "ans": 0, "exp": "`p[3]=3*2=6`."}, {"sec": 6, "kind": "single", "q": "Τι κάνει η `realloc(ptr, new_size)`;", "opts": ["Αποδεσμεύει μνήμη", "Δεσμεύει νέα χωρίς αντιγραφή", "Αλλάζει μέγεθος δεσμευμένης μνήμης (αντιγράφει τα δεδομένα)", "Μηδενίζει μνήμη"], "ans": 2, "exp": "`realloc` **επαναδεσμεύει**: αλλάζει μέγεθος + αντιγράφει παλιά δεδομένα. Αν αποτύχει → NULL (παλιά δεδομένα σώζονται)."}, {"sec": 6, "kind": "tf", "q": "Μπορείς να καλέσεις `free()` δύο φορές στον ίδιο δείκτη χωρίς πρόβλημα.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** **Double free** = **undefined behavior**. Μπορεί να καταστρέψει τον allocator ή να δημιουργήσει ευπάθεια ασφαλείας."}, {"sec": 6, "kind": "tf", "q": "Μετά από `free(p)`, ο `p` αυτόματα γίνεται `NULL`.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** `free(p)` αποδεσμεύει τη μνήμη αλλά ο `p` **παραμένει** dangling pointer. Πρέπει εσύ να γράψεις `p=NULL`."}, {"sec": 6, "kind": "output", "q": "Τι τυπώνει;", "code": "int *p=malloc(sizeof(int));\n*p=42;\nfree(p);\np=NULL;\nprintf(\"%d\", p==NULL);", "opts": ["1", "0", "42", "σφάλμα"], "ans": 0, "exp": "Μετά `p=NULL`: `p==NULL`=αληθές=**1**."}, {"sec": 6, "kind": "single", "q": "Ποιο είναι το πρόβλημα;", "code": "void f() {\n  int *p=malloc(100);\n  return;\n}", "opts": ["Λάθος τύπος", "Memory leak", "Null pointer dereference", "Stack overflow"], "ans": 1, "exp": "**Memory leak**: `f` δεσμεύει μνήμη αλλά επιστρέφει **χωρίς `free(p)`**. Η μνήμη «χάνεται» μέχρι τον τερματισμό."}, {"sec": 6, "kind": "single", "q": "Ποια η διαφορά stack και heap;", "opts": ["Stack γρηγορότερο, heap αργότερο", "Stack αυτόματος, heap χειροκίνητος", "Stack για δείκτες, heap για ints", "Stack για global, heap για local"], "ans": 1, "exp": "**Stack**: τοπικές μεταβλητές, αυτόματη διαχείριση. **Heap**: δυναμική μνήμη (`malloc`), χειροκίνητη (`free`)."}, {"sec": 6, "kind": "output", "q": "Τι τυπώνει;", "code": "void alloc(int **p) {\n  *p=malloc(sizeof(int));\n  **p=42;\n}\nint *ptr;\nalloc(&ptr);\nprintf(\"%d\", *ptr);\nfree(ptr);", "opts": ["42", "0", "σφάλμα", "NULL"], "ans": 0, "exp": "Με **διπλό δείκτη** `int **p`, η `alloc` αλλάζει τον ίδιο τον `ptr`. Μετά: `*ptr=42`."}, {"sec": 6, "kind": "single", "q": "Σε ποια βιβλιοθήκη βρίσκονται `malloc`, `calloc`, `realloc`, `free`;", "opts": ["stdio.h", "string.h", "stdlib.h", "memory.h"], "ans": 2, "exp": "Όλες οι συναρτήσεις δυναμικής μνήμης → **stdlib.h**."}, {"sec": 6, "kind": "tf", "q": "Μπορείς να χρησιμοποιήσεις `sizeof` για να βρεις το μέγεθος μνήμης που δεσμεύτηκε με `malloc`.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** `sizeof(p)` σε `int *p` δίνει μέγεθος **δείκτη** (4/8), όχι της δεσμευμένης μνήμης. Δεν υπάρχει τυπικός τρόπος για αυτό."}, {"sec": 6, "kind": "single", "q": "Τι συμβαίνει αν χρησιμοποιήσεις δείκτη μετά από `free()`;", "opts": ["Επιστρέφει 0", "Επιστρέφει παλιά δεδομένα", "Undefined behavior", "Αυτόματα μηδενίζεται"], "ans": 2, "exp": "Dangling pointer. Η μνήμη μπορεί να έχει ξαναχρησιμοποιηθεί → **undefined behavior**."}, {"sec": 6, "kind": "output", "q": "Τι τυπώνει;", "code": "int *p=(int*)malloc(sizeof(int)*3);\np[0]=1; p[1]=2; p[2]=3;\nint *q=p;\nfree(q);\nprintf(\"%d\", p==NULL ? 0 : 1);", "opts": ["0", "1", "σφάλμα", "NULL"], "ans": 1, "exp": "Μετά `free(q)`, ο `p` (ίδια διεύθυνση) δεν γίνεται αυτόματα NULL. `p!=NULL` → **1**. Αλλά ο `p` είναι dangling!"}, {"sec": 6, "kind": "single", "q": "Σωστός τρόπος δέσμευσης πίνακα 10 `int`:", "opts": ["malloc(10)", "malloc(sizeof(int))", "malloc(10*sizeof(int))", "calloc(sizeof(int), 10)"], "ans": 2, "exp": "`malloc(10*sizeof(int))` δεσμεύει ακριβώς 10 int. Σημ.: `calloc(10, sizeof(int))` επίσης σωστό (αλλά προσοχή στη σειρά παραμέτρων)."}, {"sec": 6, "kind": "output", "q": "Τι τυπώνει; (ΔΥΣΚΟΛΟ)", "code": "int *p=malloc(sizeof(int));\n*p=10;\nint *q=p;\n*q=20;\nprintf(\"%d\", *p);", "opts": ["10", "20", "σφάλμα", "0"], "ans": 1, "exp": "`p` και `q` δείχνουν στην **ίδια** δεσμευμένη θέση. `*q=20` αλλάζει αυτή τη θέση. Άρα `*p=20`."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει;", "code": "struct Point { int x, y; };\nstruct Point p={3,4};\nprintf(\"%d\", p.x+p.y);", "opts": ["7", "3", "4", "12"], "ans": 0, "exp": "`p.x=3`, `p.y=4`. `3+4=7`."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει;", "code": "struct Point { int x, y; };\nstruct Point p={3,4};\nstruct Point *ptr=&p;\nprintf(\"%d\", ptr->x);", "opts": ["3", "4", "7", "σφάλμα"], "ans": 0, "exp": "`ptr->x` ισοδυναμεί με `(*ptr).x=p.x=3`."}, {"sec": 7, "kind": "tf", "q": "Για `struct Point *p`, η `p->x` ισοδυναμεί με `(*p).x`.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. `->` είναι συντακτική ζάχαρη (syntactic sugar) για αποαναφέρωση + πρόσβαση μέλους."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει; (int=4 bytes)", "code": "struct Point { int x; int y; };\nprintf(\"%d\", sizeof(struct Point));", "opts": ["2", "4", "8", "16"], "ans": 2, "exp": "2 × `int` (4 bytes) = **8** bytes. Χωρίς padding εδώ."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει;", "code": "enum Color {RED, GREEN, BLUE};\nprintf(\"%d\", GREEN);", "opts": ["0", "1", "2", "GREEN"], "ans": 1, "exp": "`enum` ξεκινά από 0: `RED=0`, **`GREEN=1`**, `BLUE=2`."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει;", "code": "enum Color {RED=5, GREEN, BLUE};\nprintf(\"%d\", BLUE);", "opts": ["5", "6", "7", "2"], "ans": 2, "exp": "`RED=5`, `GREEN=6`, **`BLUE=7`**."}, {"sec": 7, "kind": "single", "q": "Διαφορά `struct` vs `union` ως προς μέγεθος:", "opts": ["Ίδιο μέγεθος", "struct=άθροισμα μελών, union=μεγαλύτερο μέλος", "struct=μεγαλύτερο μέλος, union=άθροισμα", "union=struct×2"], "ans": 1, "exp": "Στη `struct` κάθε μέλος έχει δική του θέση → άθροισμα. Στην `union` μοιράζονται τον ίδιο χώρο → μέγεθος = μεγαλύτερο μέλος."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει;", "code": "union U { int i; char c; };\nprintf(\"%d\", sizeof(union U));", "opts": ["5", "4", "1", "8"], "ans": 1, "exp": "Union: μέγεθος = μεγαλύτερο μέλος. `sizeof(int)=4` > `sizeof(char)=1` → **4**."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει;", "code": "struct S { int val; struct S *next; };\nstruct S a={5,NULL}, b={10,&a};\nprintf(\"%d\", b.next->val);", "opts": ["5", "10", "NULL", "σφάλμα"], "ans": 0, "exp": "`b.next=&a`. `b.next->val=a.val=5`."}, {"sec": 7, "kind": "single", "q": "Τι κάνει η `typedef struct { int x, y; } Point;`;", "opts": ["Ορίζει struct μόνο", "Ορίζει struct ΚΑΙ δημιουργεί ψευδώνυμο `Point`", "Δηλώνει μεταβλητή Point", "Σφάλμα"], "ans": 1, "exp": "`typedef` δημιουργεί **ψευδώνυμο**. Μετά μπορείς `Point p;` αντί `struct Point p;`."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει;", "code": "union U { int i; float f; };\nunion U u;\nu.i=1;\nprintf(\"%d\", u.i);", "opts": ["1", "0", "σφάλμα", "απροσδιόριστο"], "ans": 0, "exp": "Γράφουμε και διαβάζουμε το **ίδιο** μέλος → **1**."}, {"sec": 7, "kind": "tf", "q": "Τα μέλη μιας `union` μοιράζονται την ίδια θέση μνήμης.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. Αυτή είναι η ουσία της `union`: **επικάλυψη** στη μνήμη. Ενεργό είναι μόνο το τελευταίο που γράφτηκε."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει;", "code": "enum Day {MON=1,TUE,WED,THU,FRI,SAT,SUN};\nprintf(\"%d\", WED+FRI);", "opts": ["5", "8", "7", "6"], "ans": 1, "exp": "`WED=3`, `FRI=5`. `3+5=8`."}, {"sec": 7, "kind": "tf", "q": "Η δήλωση `struct Node { struct Node child; };` είναι έγκυρη.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** Δεν μπορεί να περιέχει **άμεσο** μέλος ιδίου τύπου (απεριόριστο μέγεθος). Επιτρέπεται μόνο `struct Node *child;`."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει; (struct padding, int=4 bytes)", "code": "struct R { int a; char b; int c; };\nprintf(\"%d\", sizeof(struct R));", "opts": ["6", "9", "12", "8"], "ans": 2, "exp": "Alignment: `int a`(4B) + `char b`(1B+3B padding) + `int c`(4B) = **12** bytes."}, {"sec": 7, "kind": "output", "q": "Τι τυπώνει; (ΔΥΣΚΟΛΟ)", "code": "typedef struct { int x, y; } Point;\nPoint arr[3]={{1,2},{3,4},{5,6}};\nPoint *p=arr+1;\nprintf(\"%d %d\", p->x, (p+1)->y);", "opts": ["3 6", "1 4", "3 4", "3 2"], "ans": 0, "exp": "`p=arr+1={3,4}`. `p->x=3`. `(p+1)=arr+2={5,6}`. `(p+1)->y=6`. Output: **3 6**."}, {"sec": 8, "kind": "output", "q": "Τι τυπώνει;", "code": "char s[10]=\"Hello\";\nprintf(\"%d\", strlen(s));", "opts": ["5", "10", "6", "9"], "ans": 0, "exp": "`strlen` μετράει χαρακτήρες **μέχρι** το `\\0` (δεν το μετράει). `\"Hello\"`=5 χαρακτήρες."}, {"sec": 8, "kind": "output", "q": "Τι τυπώνει;", "code": "char s[10]=\"Hello\";\nprintf(\"%d\", sizeof(s));", "opts": ["5", "10", "6", "9"], "ans": 1, "exp": "`sizeof` στον **πίνακα** δίνει το συνολικό μέγεθος: **10** bytes."}, {"sec": 8, "kind": "output", "q": "Τι τυπώνει;", "code": "char s1[20]=\"Hello\";\nstrcat(s1, \" World\");\nprintf(\"%s\", s1);", "opts": ["Hello World", "HelloWorld", " World", "Hello"], "ans": 0, "exp": "`strcat` ενώνει (concatenates). Αποτέλεσμα: **\"Hello World\"**."}, {"sec": 8, "kind": "output", "q": "Τι τυπώνει;", "code": "char s[]=\"Hello\";\ns[0]='J';\nprintf(\"%s\", s);", "opts": ["Hello", "Jello", "Jhllo", "σφάλμα"], "ans": 1, "exp": "Πίνακας `s[]` = επεξεργάσιμο αντίγραφο. `s[0]='J'` → **\"Jello\"**."}, {"sec": 8, "kind": "yn", "q": "Ο παρακάτω κώδικας είναι ασφαλής;", "code": "char *s=\"Hello\";\ns[0]='J';", "opts": ["Ναι", "Όχι"], "ans": 1, "exp": "Όχι! String literals σε **read-only** μνήμη. Εγγραφή `s[0]='J'` = undefined behavior (συνήθως segfault)."}, {"sec": 8, "kind": "output", "q": "Τι τυπώνει;", "code": "printf(\"%d\", strlen(\"\"));", "opts": ["0", "1", "-1", "σφάλμα"], "ans": 0, "exp": "Κενό string `\"\"` περιέχει μόνο `\\0`. `strlen`=**0**."}, {"sec": 8, "kind": "output", "q": "Τι τυπώνει;", "code": "char s1[]=\"abc\", s2[]=\"abc\";\nprintf(\"%d\", strcmp(s1,s2));", "opts": ["1", "0", "-1", "σφάλμα"], "ans": 1, "exp": "`strcmp` επιστρέφει **0** για ίσα strings."}, {"sec": 8, "kind": "output", "q": "Τι τυπώνει;", "code": "char s[]=\"Hello\";\nprintf(\"%d\", s[strlen(s)]);", "opts": ["0", "Hello", "o", "σφάλμα"], "ans": 0, "exp": "`strlen(s)=5`. `s[5]='\\0'`. Ο `%d` τυπώνει ASCII τιμή `'\\0'`=**0**."}, {"sec": 8, "kind": "single", "q": "Ποια είναι η ασφαλής εναλλακτική της επικίνδυνης `gets()`;", "opts": ["scanf(\"%s\", ...)", "fgets(buf, size, stdin)", "read(buf, size)", "input(buf)"], "ans": 1, "exp": "`gets()` δεν ελέγχει μέγεθος buffer → **buffer overflow**. Ασφαλής: **`fgets(buf, sizeof(buf), stdin)`**."}, {"sec": 8, "kind": "single", "q": "Ποιο mode ανοίγει αρχείο για **προσάρτηση** (append) χωρίς διαγραφή;", "opts": ["\"r\"", "\"w\"", "\"a\"", "\"rw\""], "ans": 2, "exp": "`\"a\"` (append): εγγραφή στο **τέλος**, διατηρεί υπάρχον περιεχόμενο. `\"w\"` διαγράφει. `\"r\"` μόνο ανάγνωση."}, {"sec": 8, "kind": "tf", "q": "Η `fopen(\"file.txt\", \"r\")` επιστρέφει NULL αν το αρχείο δεν υπάρχει.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. Σε mode `\"r\"`, αν το αρχείο **δεν υπάρχει** → NULL. Πρέπει πάντα να ελέγχεις: `if(fp==NULL)`."}, {"sec": 8, "kind": "single", "q": "Τι κάνει η `sprintf(buf, \"%d\", n)`;", "opts": ["Τυπώνει στην οθόνη", "Γράφει σε αρχείο", "Γράφει formatted string σε char[] buffer", "Διαβάζει από string"], "ans": 2, "exp": "`sprintf` = `printf` αλλά γράφει σε **char πίνακα**. Χρήσιμο για μετατροπή αριθμών → string."}, {"sec": 8, "kind": "output", "q": "Τι τυπώνει;", "code": "char s[]=\"Hello World\";\nprintf(\"%d\", strlen(s));", "opts": ["11", "10", "12", "5"], "ans": 0, "exp": "`\"Hello World\"`: H+e+l+l+o+space+W+o+r+l+d = **11** χαρακτήρες."}, {"sec": 8, "kind": "single", "q": "Ποια βιβλιοθήκη περιέχει `strlen`, `strcmp`, `strcpy`, `strcat`;", "opts": ["stdio.h", "stdlib.h", "string.h", "ctype.h"], "ans": 2, "exp": "Όλες οι string functions → **string.h**."}, {"sec": 8, "kind": "tf", "q": "Η `strcpy(dst, src)` είναι ασφαλής ακόμα και αν το `dst` είναι μικρότερο από το `src`.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** `strcpy` δεν ελέγχει μέγεθος → **buffer overflow**. Ασφαλέστερη: `strncpy(dst, src, n)`."}, {"sec": 8, "kind": "output", "q": "Τι τυπώνει;", "code": "char *s=\"Hello\";\nprintf(\"%d\", strlen(s));", "opts": ["5", "8", "6", "σφάλμα"], "ans": 0, "exp": "`strlen` μετράει χαρακτήρες μέχρι `\\0`. `\"Hello\"` = **5**."}, {"sec": 8, "kind": "output", "q": "Τι τυπώνει; (ΔΥΣΚΟΛΟ)", "code": "char s[20]=\"abcde\";\nstrncpy(s+2, \"XY\", 2);\nprintf(\"%s\", s);", "opts": ["abXYe", "XYcde", "abXY", "σφάλμα"], "ans": 0, "exp": "`strncpy(s+2, \"XY\", 2)` αντικαθιστά 2 χαρακτήρες από θέση 2: `s[2]='X'`, `s[3]='Y'`. Αποτέλεσμα: **\"abXYe\"**."}, {"sec": 8, "kind": "single", "q": "Τι κάνει το `feof(fp)`;", "opts": ["Κλείνει το αρχείο", "Επιστρέφει 1 αν έχει φτάσει στο τέλος του αρχείου", "Ανοίγει αρχείο για ανάγνωση", "Διαβάζει ένα χαρακτήρα"], "ans": 1, "exp": "`feof(fp)` επιστρέφει μη-μηδενικό αν ο δείκτης αρχείου έχει φτάσει στο **τέλος** (EOF). Χρήσιμο σε βρόχους ανάγνωσης."}, {"sec": 9, "kind": "single", "q": "Σε ποια βιβλιοθήκη βρίσκεται η `atoi()` (ASCII to integer);", "opts": ["stdio.h", "string.h", "math.h", "stdlib.h"], "ans": 3, "exp": "`atoi()` (μετατροπή string → int) βρίσκεται στη **stdlib.h**. Επίσης εκεί: `atof()`, `strtol()`, `malloc`, κ.α."}, {"sec": 9, "kind": "tf", "q": "Η `printf` βρίσκεται στη βιβλιοθήκη `math.h`.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** `printf`/`scanf` → **stdio.h**. Στη `math.h` βρίσκονται μαθηματικές συναρτήσεις (`sqrt`, `sin`, κ.α.)."}, {"sec": 9, "kind": "single", "q": "Τι είναι ένα segmentation fault;", "opts": ["Σφάλμα μεταγλώττισης", "Πρόσβαση σε μνήμη που δεν ανήκει στη διεργασία", "Σφάλμα float αριθμητικής", "Ατέρμονος βρόχος"], "ans": 1, "exp": "**SIGSEGV**: η διεργασία προσπάθησε να προσπελάσει **απαγορευμένη** μνήμη (NULL pointer dereference, OOB access, κ.α.)."}, {"sec": 9, "kind": "single", "q": "Τι κάνει η `#define MAX 100`;", "opts": ["Δηλώνει int μεταβλητή MAX", "Αντικαθιστά MAX με 100 πριν τη μεταγλώττιση", "Δηλώνει const σταθερά", "Εισάγει αρχείο MAX.h"], "ans": 1, "exp": "`#define` = **preprocessor macro**: τεξτουαλική αντικατάσταση ΠΡΙΝ τη μεταγλώττιση. Δεν έχει τύπο, δεν δεσμεύει μνήμη."}, {"sec": 9, "kind": "tf", "q": "Η `const int MAX=100;` και το `#define MAX 100` είναι ακριβώς ισοδύναμα.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** `const` = **μεταβλητή** (έχει τύπο, scope, debug info, `sizeof` λειτουργεί). `#define` = **κείμενο** χωρίς τύπο. Π.χ. `sizeof(MAX)` = `sizeof(int)` για const, `sizeof(100)` για #define."}, {"sec": 9, "kind": "single", "q": "Διαφορά `#include \u003cstdio.h>` vs `#include \"myfile.h\"`;", "opts": ["Καμιά διαφορά", "Angle brackets: αρχεία συστήματος. Quotes: τοπικά αρχεία", "Quotes: αρχεία συστήματος. Angle: τοπικά", "Angle: C++, quotes: C"], "ans": 1, "exp": "`\u003c...>`: ψάχνει στους **τυπικούς καταλόγους** συστήματος. `\"...\"`: ψάχνει πρώτα στον **τρέχοντα κατάλογο**."}, {"sec": 9, "kind": "single", "q": "Τι είναι το undefined behavior (UB) στη C;", "opts": ["Κώδικας που δεν μεταγλωττίζεται", "Κώδικας για τον οποίο το standard δεν ορίζει αποτέλεσμα", "Κώδικας που πάντα κάνει crash", "Κώδικας εκτός της main"], "ans": 1, "exp": "**UB**: το C standard δεν ορίζει ΤΙ θα συμβεί. Ο compiler μπορεί να κάνει οτιδήποτε — ακόμα και να φαίνεται να «δουλεύει» σωστά."}, {"sec": 9, "kind": "tf", "q": "Η C είναι στατικά τυπωμένη (statically typed) γλώσσα.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. Τύποι καθορίζονται κατά **compile time**. Ο compiler ελέγχει τύπους πριν εκτελεστεί ο κώδικας."}, {"sec": 9, "kind": "single", "q": "Τι σημαίνει `return 0;` στο τέλος της `main`;", "opts": ["Σφάλμα", "Επιτυχία (exit code 0 στο OS)", "NULL", "Τυχαία τιμή"], "ans": 1, "exp": "Σε Unix/POSIX: exit code **0** = **επιτυχία**. Μη-μηδενικά = σφάλμα. Επιστρέφεται στο λειτουργικό σύστημα."}, {"sec": 9, "kind": "single", "q": "Σε ποιο στάδιο επεξεργάζονται οι οδηγίες `#include`, `#define`;", "opts": ["Μεταγλώττιση", "Σύνδεση (linking)", "Προεπεξεργασία (preprocessing)", "Εκτέλεση (runtime)"], "ans": 2, "exp": "Οι `#...` οδηγίες επεξεργάζονται από τον **preprocessor** ΠΡΙΝ τη μεταγλώττιση. Κάνει τεξτουαλικές αντικαταστάσεις/εισαγωγές."}, {"sec": 9, "kind": "tf", "q": "Ένα C πρόγραμμα μπορεί να έχει πολλές συναρτήσεις `main`.", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** Ακριβώς **μία** `main` ανά πρόγραμμα (entry point). Πολλαπλές → linker error."}, {"sec": 9, "kind": "single", "q": "Τι σημαίνει `int main(int argc, char *argv[])`;", "opts": ["argc=αριθμός ορισμάτων γραμμής εντολής, argv=πίνακας strings", "argc=αριθμός μεταβλητών, argv=τιμές τους", "argc=0 πάντα", "Σφάλμα"], "ans": 0, "exp": "`argc` (argument count): πόσα ορίσματα (τουλάχιστον 1 = το όνομα εκτελέσιμου). `argv[0]` = όνομα, `argv[1]`... = τα ορίσματα."}, {"sec": 9, "kind": "tf", "q": "Το `sizeof` για τύπους/στατικούς πίνακες υπολογίζεται κατά compile time.", "opts": ["Σωστό", "Λάθος"], "ans": 0, "exp": "Σωστό. `sizeof` είναι **τελεστής** (όχι συνάρτηση) και αξιολογείται κατά **compile time** για τύπους και στατικούς πίνακες. Εξαίρεση: VLAs (C99)."}, {"sec": 9, "kind": "tf", "q": "Η C υποστηρίζει αυτόματη διαχείριση μνήμης (garbage collection).", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** Η C δεν έχει GC. Ο προγραμματιστής είναι υπεύθυνος: `malloc` για δέσμευση, `free` για αποδέσμευση."}, {"sec": 9, "kind": "single", "q": "Τι είναι linked list;", "opts": ["Πίνακας σε συνεχόμενη μνήμη", "Δομή κόμβων όπου κάθε κόμβος δείχνει στον επόμενο με δείκτη", "Ουρά με array", "Δυαδικό δέντρο"], "ans": 1, "exp": "**Linked list**: κάθε **κόμβος** έχει τιμή + **δείκτη** στον επόμενο. Δεν απαιτεί συνεχόμενη μνήμη (σε αντίθεση με array)."}, {"sec": 9, "kind": "single", "q": "Ποιος τελεστής κάνει bitwise NOT στη C;", "opts": ["!", "~", "^", "NOT"], "ans": 1, "exp": "`~` = **bitwise NOT** (αντιστρέφει κάθε bit). `!` = λογικός NOT (επιστρέφει 0 ή 1). Π.χ. `~5=-6`, `!5=0`."}, {"sec": 9, "kind": "single", "q": "Τι κάνει η `exit(1)`;", "opts": ["Επιστρέφει τιμή από την main", "Τερματίζει αμέσως το πρόγραμμα με κωδικό 1 (σφάλμα)", "Βγαίνει από τον τρέχοντα βρόχο", "Αποδεσμεύει μνήμη"], "ans": 1, "exp": "`exit(code)` τερματίζει **αμέσως** το πρόγραμμα (ακόμα και από βαθιά συνάρτηση). `exit(0)=επιτυχία`, `exit(1)=σφάλμα`. Βρίσκεται στη **stdlib.h**."}, {"sec": 9, "kind": "tf", "q": "Ο τελεστής `%` λειτουργεί και με αριθμούς κινητής υποδιαστολής (float/double).", "opts": ["Σωστό", "Λάθος"], "ans": 1, "exp": "**Λάθος.** Ο `%` στη C λειτουργεί **μόνο** με ακέραιους (`int`, `long`, κ.α.). Για float χρησιμοποιείται η `fmod()` από την `math.h`."}, {"sec": 9, "kind": "single", "q": "Ποια είναι η έξοδος του αλγόριθμου binary search στο χειρότερο σενάριο για N στοιχεία;", "opts": ["O(N)", "O(log N)", "O(N log N)", "O(1)"], "ans": 1, "exp": "**Binary search** διαιρεί διαρκώς τον χώρο αναζήτησης στο μισό → **O(log N)** στο χειρότερο. (Linear search = O(N))."}];
+
+const SNAMES={1:"Τελεστές & Βασικά",2:"Έλεγχος Ροής",3:"Πίνακες",4:"Δείκτες",5:"Συναρτήσεις",6:"Δυναμική Μνήμη",7:"Δομές/Ενώσεις",8:"Αλφαριθμητικά & Αρχεία",9:"Θεωρία C"};
+const KIND={output:{cls:"b-out",lbl:"Τι τυπώνει;"},single:{cls:"b-mcq",lbl:"Πολλαπλή Επιλογή"},multi:{cls:"b-multi",lbl:"Πολλαπλές Απαντήσεις"},tf:{cls:"b-tf",lbl:"Σωστό / Λάθος"},yn:{cls:"b-yn",lbl:"Ναι / Όχι"}};
+const KW=new Set(["int","char","float","double","void","unsigned","signed","long","short","for","while","do","if","else","switch","case","break","continue","return","struct","union","enum","typedef","sizeof","const","static","extern","register","volatile","goto","default","NULL","printf","scanf","malloc","calloc","realloc","free","strlen","strcmp","strcpy","strcat","fopen","fclose","fread","fwrite","fprintf","fscanf","fgets","feof","exit","NULL"]);
+const state={};
+let filterSec=0;
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function fmt(s){
+  s=esc(s);
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  return s;
+}
+function hlC(code){
+  const re=/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|([A-Za-z_]\w*)|(\d+\.?\d*)/g;
+  let out="",last=0,m;
+  while((m=re.exec(code))){
+    out+=esc(code.slice(last,m.index));
+    if(m[1])out+='<span class="c-com">'+esc(m[1])+'</span>';
+    else if(m[2])out+='<span class="c-str">'+esc(m[2])+'</span>';
+    else if(m[3])out+=KW.has(m[3])?'<span class="c-kw">'+esc(m[3])+'</span>':esc(m[3]);
+    else if(m[4])out+='<span class="c-num">'+esc(m[4])+'</span>';
+    last=re.lastIndex;
+  }
+  return out+esc(code.slice(last));
+}
+
+function render(){
+  const quiz=document.getElementById("quiz");
+  quiz.innerHTML="";
+  const visible=filterSec===0?Q:Q.filter(q=>q.sec===filterSec);
+  let curSec=0,n=0;
+  visible.forEach((q,vi)=>{
+    const gi=Q.indexOf(q);
+    if(q.sec!==curSec){
+      curSec=q.sec;
+      if(filterSec===0){
+        const h=document.createElement("div");
+        h.className="sh";
+        h.innerHTML='<span class="n">'+String(q.sec).padStart(2,"0")+'</span> '+SNAMES[q.sec];
+        quiz.appendChild(h);
+      }
+    }
+    n++;
+    const card=document.createElement("div");
+    card.className="card";card.id="q"+gi;
+    if(state[gi]&&state[gi].answered)card.classList.add("done");
+    const k=KIND[q.kind];const isM=q.kind==="multi";
+    let html='<div class="qh"><span class="qn">Q'+n+'</span><span class="badge '+k.cls+'">'+k.lbl+'</span></div>'+
+      '<div class="qt">'+fmt(q.q)+'</div>';
+    if(isM)html+='<div class="qhint">Επίλεξε όλες τις σωστές.</div>';
+    if(q.code)html+='<div class="cpane"><div class="ctab"><span class="cdot"></span>main.c</div><pre><code>'+hlC(q.code)+'</code></pre></div>';
+    html+='<div class="opts" data-q="'+gi+'">';
+    q.opts.forEach((o,j)=>{
+      const mk=isM?"":String.fromCharCode(65+j);
+      const st2=state[gi];
+      let cls="opt";
+      if(st2&&st2.answered){
+        const ansSet=Array.isArray(q.ans)?new Set(q.ans):new Set([q.ans]);
+        const selSet=st2.sel||new Set([st2.j]);
+        if(ansSet.has(j)&&selSet.has(j))cls+=" correct";
+        else if(ansSet.has(j)&&!selSet.has(j))cls+=" missed";
+        else if(!ansSet.has(j)&&selSet.has(j))cls+=" wrong";
+      } else if(st2&&!st2.answered&&isM&&st2.sel&&st2.sel.has(j)){
+        cls+=" sel";
+      }
+      const mkCh=state[gi]&&state[gi].answered?(()=>{
+        const ansSet=Array.isArray(q.ans)?new Set(q.ans):new Set([q.ans]);
+        const selSet=state[gi].sel||new Set([state[gi].j]);
+        if(ansSet.has(j)&&selSet.has(j))return "✓";
+        if(ansSet.has(j)&&!selSet.has(j))return "+";
+        if(!ansSet.has(j)&&selSet.has(j))return "✗";
+        return mk;
+      })():mk;
+      html+='<button class="'+cls+'" data-i="'+gi+'" data-j="'+j+'"'+(st2&&st2.answered?" disabled":"")+'><span class="mk">'+mkCh+'</span><span class="lbl">'+fmt(o)+'</span></button>';
+    });
+    html+='</div>';
+    if(isM)html+='<button class="chk" data-check="'+gi+'"'+(state[gi]&&state[gi].answered?" disabled":"")+'>Έλεγχος ✓</button>';
+    html+='<div class="fb'+((state[gi]&&state[gi].answered)?(" show "+(state[gi].correct?"right":"miss")):"")+'\nid=\"fb'+gi+'\"><div class=\"tag\">'+((state[gi]&&state[gi].answered)?(state[gi].correct?"✓ Σωστό!":"✗ Λάθος"):"")+'\n</div><div class=\"exp\">'+fmt(q.exp)+'</div></div>';
+    card.innerHTML=html;
+    quiz.appendChild(card);
+  });
+  document.getElementById("st").textContent=Q.length;
+  document.getElementById("sr").textContent=Q.length-(Object.values(state).filter(s=>s.answered).length);
+  bind();updateStatus();
+}
+
+function bind(){
+  document.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>onOpt(b)));
+  document.querySelectorAll("[data-check]").forEach(b=>b.addEventListener("click",()=>checkM(parseInt(b.dataset.check))));
+}
+
+function onOpt(btn){
+  const i=parseInt(btn.dataset.i),j=parseInt(btn.dataset.j);
+  if(state[i]&&state[i].answered)return;
+  const q=Q[i];
+  if(q.kind==="multi"){
+    if(!state[i])state[i]={answered:false,sel:new Set()};
+    if(state[i].sel.has(j))state[i].sel.delete(j);
+    else state[i].sel.add(j);
+    btn.classList.toggle("sel");
+    btn.querySelector(".mk").textContent=btn.classList.contains("sel")?"✓":"";
+    return;
+  }
+  const q2=Q[i];
+  const ans=Array.isArray(q2.ans)?q2.ans[0]:q2.ans;
+  const correct=(j===ans);
+  document.querySelectorAll('.opts[data-q="'+i+'"] .opt').forEach((o,k)=>{
+    o.disabled=true;
+    if(k===ans){o.classList.add("correct");o.querySelector(".mk").textContent="✓";}
+    if(k===j&&!correct){o.classList.add("wrong");o.querySelector(".mk").textContent="✗";}
+  });
+  state[i]={answered:true,correct:correct,j:j,sel:new Set([j])};
+  showFb(i,correct);
+}
+
+function checkM(i){
+  if(state[i]&&state[i].answered)return;
+  const q=Q[i];
+  const ansSet=new Set(q.ans);
+  const selSet=(state[i]&&state[i].sel)||new Set();
+  const correct=ansSet.size===selSet.size&&[...ansSet].every(x=>selSet.has(x));
+  document.querySelectorAll('.opts[data-q="'+i+'"] .opt').forEach((o,k)=>{
+    o.disabled=true;o.classList.remove("sel");
+    const mk=o.querySelector(".mk");
+    if(ansSet.has(k)&&selSet.has(k)){o.classList.add("correct");mk.textContent="✓";}
+    else if(ansSet.has(k)&&!selSet.has(k)){o.classList.add("missed");mk.textContent="+";}
+    else if(!ansSet.has(k)&&selSet.has(k)){o.classList.add("wrong");mk.textContent="✗";}
+    else mk.textContent="";
+  });
+  const cb=document.querySelector('[data-check="'+i+'"]');
+  if(cb)cb.disabled=true;
+  state[i]={answered:true,correct:correct,sel:selSet};
+  showFb(i,correct);
+}
+
+function showFb(i,correct){
+  const fb=document.getElementById("fb"+i);
+  if(!fb)return;
+  fb.classList.add("show",correct?"right":"miss");
+  fb.querySelector(".tag").textContent=correct?"✓ Σωστό!":"✗ Λάθος";
+  document.getElementById("q"+i).classList.add("done");
+  updateStatus();
+}
+
+function updateStatus(){
+  let ans=0,ok=0;
+  Q.forEach((q,i)=>{if(state[i]&&state[i].answered){ans++;if(state[i].correct)ok++;}});
+  document.getElementById("sa").textContent=ans;
+  document.getElementById("so").textContent=ok;
+  document.getElementById("sb").textContent=ans-ok;
+  document.getElementById("sr").textContent=Q.length-ans;
+  document.getElementById("pb").style.width=(ans/Q.length*100)+"%";
+}
+
+function showResults(){
+  let ok=0,bad=0,na=0;
+  Q.forEach((q,i)=>{if(state[i]&&state[i].answered){state[i].correct?ok++:bad++;}else na++;});
+  const g=Math.round(ok/Q.length*10),pct=Math.round(ok/Q.length*100);
+  let msg;
+  if(g>=10)msg="ΤΕΛΕΙΑ — έτοιμος/η για 10! 🎯";
+  else if(g>=8)msg="Πολύ καλά. Άλλη μία επανάληψη στα λάθη και το κλειδώνεις.";
+  else if(g>=6)msg="Καλή βάση. Ξαναδιάβασε τις επεξηγήσεις στα λάθη — αξίζει.";
+  else if(g>=4)msg="Εστίασε στα κεφάλαια με τα περισσότερα λάθη — φαίνονται παρακάτω.";
+  else msg="Πέρνα ξανά τις επεξηγήσεις — κάθε πέρασμα κολλάει κάτι παραπάνω.";
+  const col=g>=8?"var(--ok)":(g>=5?"var(--warn)":"var(--bad)");
+  // sec breakdown
+  const secOK={},secTot={};
+  Q.forEach((q,i)=>{
+    secTot[q.sec]=(secTot[q.sec]||0)+1;
+    if(state[i]&&state[i].answered&&state[i].correct)secOK[q.sec]=(secOK[q.sec]||0)+1;
+  });
+  let breakdown="";
+  for(let s=1;s<=9;s++){
+    const t=secTot[s]||0,o=secOK[s]||0;
+    const pct2=t?Math.round(o/t*100):0;
+    const bar=pct2>=80?"var(--ok)":pct2>=50?"var(--warn)":"var(--bad)";
+    breakdown+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;font-family:var(--mono);font-size:13px">'+
+      '<span style="min-width:150px;color:var(--muted);font-size:11.5px">'+SNAMES[s]+'</span>'+
+      '<div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden">'+
+        '<div style="height:100%;width:'+pct2+'%;background:'+bar+'"></div></div>'+
+      '<span style="color:'+bar+';min-width:50px">'+o+'/'+t+'</span></div>';
+  }
+  let dots="";
+  Q.forEach((q,i)=>{
+    const s=state[i];
+    const cls=(!s||!s.answered)?"":"d-"+( s.correct?"ok":"bad");
+    dots+='<button class="'+cls+'" data-go="'+i+'" title="Q'+(i+1)+'"'+(cls?"":' style="opacity:.4"')+">"+(i+1)+"</button>";
+  });
+  const r=document.getElementById("results");
+  r.innerHTML='<h2>Αποτελέσματα</h2>'+
+    '<div class="grade"><span class="big" style="color:'+col+'">'+g+'</span><span class="of">/ 10</span><span class="pct">'+pct+'% σωστά</span></div>'+
+    '<p class="msg">'+msg+'</p>'+
+    '<div class="tally"><span class="t-ok">✓ Σωστές: <b>'+ok+'</b></span><span class="t-bad">✗ Λάθος: <b>'+bad+'</b></span><span class="t-na">· Αναπάντητες: <b>'+na+'</b></span></div>'+
+    '<details><summary style="cursor:pointer;font-family:var(--mono);font-size:13px;color:var(--muted);margin-bottom:12px">▸ Ανάλυση ανά κεφάλαιο</summary>'+breakdown+'</details>'+
+    '<div class="dotmap">'+dots+'</div>'+
+    '<div class="res-act"><button class="btn primary" id="restart">↺ Εκ νέου</button><button class="btn" id="toTop">▲ Πάνω</button></div>';
+  r.classList.add("show");
+  r.scrollIntoView({behavior:"smooth",block:"start"});
+  document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{
+    document.getElementById("q"+b.dataset.go)?.scrollIntoView({behavior:"smooth",block:"center"});
+  }));
+  document.getElementById("restart").addEventListener("click",restart);
+  document.getElementById("toTop").addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+}
+
+function restart(){
+  for(const k in state)delete state[k];
+  document.getElementById("results").classList.remove("show");
+  render();window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// filter pills
+document.getElementById("filter").addEventListener("click",e=>{
+  const pill=e.target.closest(".pill");
+  if(!pill)return;
+  document.querySelectorAll(".pill").forEach(p=>p.classList.remove("on"));
+  pill.classList.add("on");
+  filterSec=parseInt(pill.dataset.sec);
+  render();
+});
+
+document.getElementById("sr2").addEventListener("click",showResults);
+render();updateStatus();
+</script>
+</body>
+</html>
